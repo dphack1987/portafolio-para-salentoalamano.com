@@ -390,6 +390,30 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; line-height: 1.
 }
 
 /* ============ PLANES ============ */
+.launch-banner {
+  display: flex; align-items: center; gap: 1rem;
+  max-width: 760px; margin: 0 auto 2.2rem;
+  background: linear-gradient(135deg, rgba(201,111,74,.1), rgba(255,215,0,.15));
+  border: 1px solid rgba(201,111,74,.35);
+  border-radius: var(--radius-sm);
+  padding: 1rem 1.4rem;
+}
+.launch-icon { font-size: 1.8rem; flex-shrink: 0; }
+.launch-banner strong {
+  display: block; font-family: var(--font-display);
+  color: var(--terracotta-dark); font-size: 1.05rem;
+}
+.launch-banner span { font-size: .88rem; color: var(--text-muted); }
+.launch-tag {
+  display: inline-block; align-self: flex-start;
+  background: rgba(201,111,74,.12); color: var(--terracotta-dark);
+  border: 1px solid rgba(201,111,74,.3);
+  font-size: .72rem; font-weight: 800; letter-spacing: .05em;
+  text-transform: uppercase;
+  padding: .28rem .75rem; border-radius: 999px;
+  margin-bottom: .8rem;
+}
+
 .plans-grid {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.6rem;
   align-items: stretch; max-width: 1020px; margin: 0 auto;
