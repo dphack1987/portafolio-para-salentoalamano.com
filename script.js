@@ -90,4 +90,88 @@ document.addEventListener("DOMContentLoaded", () => {
   // 8) Marquee de logos: duplicar track para loop infinito
   const track = document.getElementById("marqueeTrack");
   if (track) track.innerHTML += track.innerHTML;
+
+  // 9) QR + compartir (apunta a la URL donde esté desplegado el sitio)
+  const shareUrl = window.location.origin;
+  const shareText =
+    "Te comparto Salento a la Mano: la plataforma que pone tu negocio frente a los turistas de Salento — mapa impreso + web en 6 idiomas + app interactiva. Mira los planes 👇";
+
+  const urlEl = document.getElementById("shareUrl");
+  if (urlEl) urlEl.textContent = shareUrl;
+
+  // QR del sitio actual (apunta a donde esté desplegado)
+  let qrSvg = null;
+  const qrBox = document.getElementById("qrCode");
+  if (qrBox && window.qrcode) {
+    const qr = qrcode(0, "M");
+    qr.addData(shareUrl);
+    qr.make();
+    qrSvg = qr.createSvgTag({ cellSize: 4, margin: 0 });
+    qrBox.innerHTML = qrSvg;
+  }
+
+  // Enviar por WhatsApp
+  const waShare = document.getElementById("shareWhatsApp");
+  if (waShare) {
+    waShare.addEventListener("click", () => {
+      const msg = encodeURIComponent(`${shareText}\n\n${shareUrl}`);
+      window.open(
+        `https://wa.me/?text=${msg}`,
+        "_blank",
+        "noopener"
+      );
+    });
+  }
+
+  // Copiar enlace
+  const copyBtn = document.getElementById("copyLink");
+  if (copyBtn) {
+    copyBtn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        copyBtn.textContent = "✓ Enlace copiado";
+        setTimeout(() => (copyBtn.textContent = "🔗 Copiar enlace"), 2000);
+      } catch {
+        prompt("Copia este enlace:", shareUrl);
+      }
+    });
+  }
+
+  // Compartir nativo (móviles)
+  const nativeBtn = document.getElementById("shareNative");
+  if (nativeBtn) {
+    if (navigator.share) {
+      nativeBtn.addEventListener("click", () =>
+        navigator.share({ title: "Salento a la Mano", text: shareText, url: shareUrl })
+      );
+    } else {
+      nativeBtn.style.display = "none";
+    }
+  }
+
+  // Descargar QR como PNG (SVG -> canvas)
+  const dlBtn = document.getElementById("downloadQr");
+  if (dlBtn && qrBox) {
+    dlBtn.addEventListener("click", () => {
+      const svgEl = qrBox.querySelector("svg");
+      if (!svgEl) return;
+      const svgStr = new XMLSerializer().serializeToString(svgEl);
+      const img = new Image();
+      img.onload = () => {
+        const size = 600;
+        const canvas = document.createElement("canvas");
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext("2d");
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, size, size);
+        ctx.drawImage(img, 0, 0, size, size);
+        const a = document.createElement("a");
+        a.download = "salento-a-la-mano-qr.png";
+        a.href = canvas.toDataURL("image/png");
+        a.click();
+      };
+      img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgStr);
+    });
+  }
 });
